@@ -48,7 +48,6 @@ jobs:
           path: algeboard_left.uf2
       - name: West Build (ALGEBOARD Right)
         run: west build --pristine -s zmk/app -b nrfmicro_13 -- -DSHIELD=algeboard_right -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
-
       - name: ALGEBOARD Right Kconfig file
         run: cat build/zephyr/.config | grep -v "^#" | grep -v "^$"
       - name: Rename zmk.uf2
@@ -58,3 +57,13 @@ jobs:
         with:
           name: firmware
           path: algeboard_right.uf2
+
+      - name: West Build (Reset firmware)
+        run: west build --pristine -s zmk/app -b nrfmicro_13 -- -DSHIELD=settings_reset -DZMK_CONFIG="${GITHUB_WORKSPACE}/config"
+      - name: Rename zmk.uf2
+        run: cp build/zephyr/zmk.uf2 reset.uf2
+      - name: Archive (Reset)
+        uses: actions/upload-artifact@v2
+        with:
+          name: firmware
+          path: reset.uf2
